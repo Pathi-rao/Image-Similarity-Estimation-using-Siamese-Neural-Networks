@@ -1,0 +1,2 @@
+# Project_for_Numerical_methods_for_algorithmic_systems_and_NeuralNetworks
+Repo for the final project regarding Numerical methods for algorithmic systems and NeuralNetworks
