@@ -13,7 +13,6 @@ import argparse
 from loss import ContrastiveLoss
 import datahandler as dl
 from misc import Utils
-from config import Config
 from model import SiameseNetwork
 
 # parser = argparse.ArgumentParser(description="Siamese CNN")
