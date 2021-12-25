@@ -10,20 +10,17 @@ The top row and the bottom row of any column is one pair. The 0s and 1s correspo
 1 indiciates dissimilar, and 0 indicates similar.
 """
 
-root_dir = '..\..\Dataset\MVTEC_AD'
+root_dir = '../../Dataset/MVTEC_AD'
 trainbatchsize = 4
 validbatchsize = 4
+testbatchsize = 1
 
 
 def display_samples (show_train = True, show_valid = True):
 
-    train_loader, valid_loader = dh.pre_processor(root_dir=root_dir, trainbatchsize=trainbatchsize, 
-                                                validbatchsize=validbatchsize)
+    train_loader, valid_loader, test_loader = dh.pre_processor(root_dir=root_dir, trainbatchsize=trainbatchsize, 
+                                                validbatchsize=validbatchsize, testbatchsize=testbatchsize)
 
-    # vis_dataloader = DataLoader(siamese_dataset,
-    #                         shuffle=True,
-    #                         num_workers=8,
-    #                         batch_size=8)
     if show_valid:
         valid_dataiter = iter(valid_loader)
         # print(dataiter)
