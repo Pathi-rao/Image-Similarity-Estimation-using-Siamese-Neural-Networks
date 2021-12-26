@@ -30,5 +30,9 @@ pip install -r requirements.txt
 4. Run `train.py` to start training the model and use `test.py` to do inference on any two images
 ## References
 
-* [PyTorch](https://github.com/pytorch/pytorch) for training deep-learning models.
+* Paul Bergmann, Kilian Batzner, Michael Fauser, David Sattlegger, Carsten Steger: The MVTec Anomaly Detection Dataset: A Comprehensive Real-World Dataset for Unsupervised Anomaly Detection;
+in: International Journal of Computer Vision, January 2021 [pdf](https://link.springer.com/content/pdf/10.1007/s11263-020-01400-4.pdf)
+
+* Paul Bergmann, Michael Fauser, David Sattlegger, Carsten Steger: MVTec AD – A Comprehensive Real-World Dataset for Unsupervised Anomaly Detection;
+in: IEEE Conference on Computer Vision and Pattern Recognition (CVPR), June 2019 [pdf](https://www.mvtec.com/fileadmin/Redaktion/mvtec.com/company/research/datasets/mvtec_ad.pdf) 
 
