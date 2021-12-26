@@ -36,3 +36,5 @@ in: International Journal of Computer Vision, January 2021 [pdf](https://link.sp
 * Paul Bergmann, Michael Fauser, David Sattlegger, Carsten Steger: MVTec AD – A Comprehensive Real-World Dataset for Unsupervised Anomaly Detection;
 in: IEEE Conference on Computer Vision and Pattern Recognition (CVPR), June 2019 [pdf](https://www.mvtec.com/fileadmin/Redaktion/mvtec.com/company/research/datasets/mvtec_ad.pdf) 
 
+* Siamese Neural Networks for One Shot Image Recognition [pdf](https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf)
+
