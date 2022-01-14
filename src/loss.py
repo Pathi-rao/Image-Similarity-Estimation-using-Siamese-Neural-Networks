@@ -4,7 +4,8 @@ import torch.nn.functional as F
 
 class ContrastiveLoss(torch.nn.Module):
     """
-    Contrastive loss function.
+    Function which takes takes in outputs and a label as arguments
+    and return the constrative loss
     Based on: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
     """
 

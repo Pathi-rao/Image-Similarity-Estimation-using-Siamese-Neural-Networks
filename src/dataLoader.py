@@ -7,6 +7,10 @@ import torch
 from torch.utils.data import Dataset
 
 
+"""
+Class which creates image pairs. 
+"""
+
 class SNNTrain(Dataset):
     
     def __init__(self, imageFolderDataset, transform=None, should_invert=True):
@@ -15,8 +19,6 @@ class SNNTrain(Dataset):
         self.should_invert = should_invert
         
     def __getitem__(self, index):
-
-        # random.seed(13)
 
         img0_tuple = random.choice(self.imageFolderDataset.imgs)
 
@@ -39,8 +41,8 @@ class SNNTrain(Dataset):
         img1 = Image.open(img1_tuple[0]).convert('RGB')
 
         # convert images to grayscale if passed "L". 
-        # img0 = img0.convert("L")
-        # img1 = img1.convert("L")
+        # img0 = Image.open(img0_tuple[0]).convert("L")
+        # img1 = Image.open(img1_tuple[0]).convert("L")
         
         if self.should_invert:
 
@@ -94,9 +96,9 @@ class SNNTest(Dataset):
         img0 = Image.open(img0_tuple[0]).convert('RGB')
         img1 = Image.open(img1_tuple[0]).convert('RGB')
 
-        # convert images to grayscale if passed "L". 
-        # img0 = img0.convert("L")
-        # img1 = img1.convert("L")
+        # convert images to grayscale if passed "L".
+        # img0 = Image.open(img0_tuple[0]).convert("L")
+        # img1 = Image.open(img1_tuple[0]).convert("L")
         
         if self.should_invert:
             img0 = PIL.ImageOps.invert(img0)
