@@ -1,10 +1,7 @@
 import torch
-import torchvision.datasets as dset
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
 from torch import optim
-import torchvision
-import torch.nn.functional as F
+from torch.utils import tensorboard
+
 import time
 
 import matplotlib.pyplot as plt
@@ -43,6 +40,7 @@ val_losses = []
 best_val = 0.1
 
 start_time = time.time()
+writer = tensorboard.SummaryWriter(log_dir='logs')
 
 for epoch in range( epochs):
 
@@ -65,6 +63,7 @@ for epoch in range( epochs):
 
         running_loss += loss_contrastive.item()
 
+        writer.add_scalar('loss/train', loss_contrastive.item(), i)
     # print('My loss... ', running_loss /img0.shape[0] )
     # print('cjv loss....', running_loss/i)
     train_losses.append(running_loss /len(train_loader))
@@ -80,9 +79,10 @@ for epoch in range( epochs):
                 # distance = torch.sigmoid(F.pairwise_distance(output1, output2))
                 loss_val = criterion(output1, output2, label_)
                 val_loss += loss_val.item() 
-
+                writer.add_scalar('loss/valid', loss_val.item() , i)
         # print('validation image shape is:   ', img_0.shape[0])
         val_losses.append(val_loss/len(valid_loader))
+        
 
         print('Epoch : ',epoch, "\t Train loss: {:.2f}".format(running_loss/len(train_loader)),
             "\t Validation loss: {:.2f}".format(val_loss/len(valid_loader)))
