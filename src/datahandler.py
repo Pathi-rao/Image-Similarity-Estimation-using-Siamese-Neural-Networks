@@ -40,12 +40,12 @@ def pre_processor(root_dir, trainbatchsize, validbatchsize, testbatchsize):
     test_data = datasets.ImageFolder(root_dir + '/New_test')
 
     siamese_train_dataset = dl.SNNTrain(imageFolderDataset = train_data,
-                                            transform = transforms.Compose([transforms.Resize((128,128)),
+                                            transform = transforms.Compose([transforms.Resize((105,105)),
                                                                             transforms.ToTensor()]),
                                                                             # transforms.Normalize([0.4318, 0.4012, 0.3913], [0.2597, 0.2561, 0.2525])]),
                                                                             should_invert = False)
     siamese_test_dataset = dl.SNNTest(imageFolderDataset = test_data,
-                                            transform = transforms.Compose([transforms.Resize((128,128)),
+                                            transform = transforms.Compose([transforms.Resize((105,105)),
                                                                             transforms.ToTensor()]),
                                                                             # transforms.Normalize([0.4318, 0.4012, 0.3913], [0.2597, 0.2561, 0.2525])]),
                                                                             should_invert = False)
@@ -61,6 +61,6 @@ def pre_processor(root_dir, trainbatchsize, validbatchsize, testbatchsize):
     valid_loader =  DataLoader(val_set, batch_size = validbatchsize,
                                             shuffle = False) # shuffle doesn't matter during validation and testing 
     test_loader = DataLoader(siamese_test_dataset, batch_size = testbatchsize,
-                                            shuffle = True)
+                                            shuffle = False)
 
     return train_loader , valid_loader, test_loader
