@@ -1,9 +1,12 @@
+from random import triangular
 import torch
 from torch import optim
 from torch.utils import tensorboard
+import torchvision
 import os
 import time
 import matplotlib.pyplot as plt
+from misc import Utils
 
 from loss import ContrastiveLoss
 import datahandler as dl
@@ -17,17 +20,37 @@ lear_rate = 0.0005
 trainbatchsize = 8
 validbatchsize = 8
 testbatchsize = 1
-log_dir='logs'
+log_dir='test_logs'
 
 train_loader, valid_loader, test_loader = dl.pre_processor(root_dir=root_dir, trainbatchsize=trainbatchsize, 
                                                 validbatchsize=validbatchsize,
                                                 testbatchsize=testbatchsize)
 
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+writer = tensorboard.SummaryWriter(log_dir)
+
+# Writing to Tensorboard
+valid_dataiter = iter(valid_loader)
+example_batch = next(valid_dataiter)
+tensorboard_images, labels = example_batch
+concatenated = torch.cat((example_batch[0],example_batch[1]),0)
+# print(example_batch[2].numpy()) # 1 is for different class, 0 is for same class
+img_grid = torchvision.utils.make_grid(concatenated, nrow=4)
+#write to tensorboard
+writer.add_image('MVTEC_Images', img_grid)
+
+
 net = SiameseNetwork().cuda()
-# net.train()
 criterion = ContrastiveLoss().cuda()
 optimizer = optim.Adam(net.parameters(), lr = lear_rate )
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, gamma=0.95)
+
+#Inspect the model using TensorBoard
+writer.add_image("images", img_grid)
+writer.add_graph(net, tensorboard_images)
+writer.close()
+
 
 train_loss_history = [] 
 val_loss_history = [] 
@@ -39,9 +62,6 @@ best_val = 0.1
 
 start_time = time.time()
 
-if not os.path.exists(log_dir):
-    os.makedirs(log_dir)
-writer = tensorboard.SummaryWriter(log_dir)
 
 for epoch in range(epochs):
     # print(epoch)
