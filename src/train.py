@@ -73,14 +73,13 @@ for epoch in range(epochs):
 
         img0, img1 , label = img0.cuda(), img1.cuda() , label.cuda()
 
-        # reset the gradients
-        optimizer.zero_grad()
+        optimizer.zero_grad()               # reset the gradients
 
         output1, output2 = net(img0, img1)
-        loss_contrastive = criterion(output1, output2, label)
+        loss_contrastive = criterion(output1, output2, label) # find the loss
 
-        loss_contrastive.backward()                             # backward pass
-        optimizer.step()                                        # update weights
+        loss_contrastive.backward()         # backward pass
+        optimizer.step()                    # update weights
 
         running_loss += loss_contrastive.item()
 
@@ -89,7 +88,7 @@ for epoch in range(epochs):
 
     if epoch % 2 == 0: # validate for every 2 epochs
         train_loss_history.append(running_loss/len(train_loader))
-        net.eval()
+        net.eval() #set the model to evaluation mode
         val_loss = 0
         with torch.no_grad():
             for i , data in enumerate(valid_loader, 0):
