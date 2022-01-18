@@ -113,3 +113,46 @@ class SNNTest(Dataset):
     
     def __len__(self):
         return len(self.imageFolderDataset.imgs) * 2
+
+# # creates n-way one shot learning evaluation
+# class NWayOneShotEvalSet(Dataset):
+#     def __init__(self, categories, root_dir, setSize, numWay, transform=None):
+#         self.categories = categories
+#         self.root_dir = root_dir
+#         self.setSize = setSize
+#         self.numWay = numWay
+#         self.transform = transform
+#     def __len__(self):
+#         return self.setSize
+#     def __getitem__(self, idx):
+#         # find one main image
+#         category = random.choice(categories)
+#         character = random.choice(category[1])
+#         imgDir = root_dir + category[0] + '/' + character
+#         imgName = random.choice(os.listdir(imgDir))
+#         mainImg = Image.open(imgDir + '/' + imgName)
+#         # print(imgDir + '/' + imgName)
+#         if self.transform:
+#             mainImg = self.transform(mainImg)
+        
+#         # find n numbers of distinct images, 1 in the same set as the main
+#         testSet = []
+#         label = np.random.randint(self.numWay)
+#         for i in range(self.numWay):
+#             testImgDir = imgDir
+#             testImgName = ''
+#             if i == label:
+#                 testImgName = random.choice(os.listdir(imgDir))
+#             else:
+#                 testCategory = random.choice(categories)
+#                 testCharacter = random.choice(testCategory[1])
+#                 testImgDir = root_dir + testCategory[0] + '/' + testCharacter
+#                 while testImgDir == imgDir:
+#                     testImgDir = root_dir + testCategory[0] + '/' + testCharacter
+#                 testImgName = random.choice(os.listdir(testImgDir))
+#             testImg = Image.open(testImgDir + '/' + testImgName)
+#             if self.transform:
+#                 testImg = self.transform(testImg)
+#             testSet.append(testImg)
+#         # plt.imshow()
+#         return mainImg, testSet, torch.from_numpy(np.array([label], dtype = int))
