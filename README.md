@@ -1,4 +1,4 @@
-# MVTEC ANOMALY DETECTION USING SIAMESE NEURAL NETWORKS
+# MVTEC Image Similarity Estimation using Siamese Neural Networks
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
@@ -7,9 +7,13 @@
   - [References](#references)
 
 ## About the Project
-This project is aimed to implement a image similarity estimation model using deep learning that will be able to generalize the difference between two given images.
+This project is aimed to implement an image similarity estimation model using deep learning that will be able to generalize the difference between two given images and output a similarity metric.
+
+This similarity metric could be any distance measure. For the sake of simplicity and also since it has been effective in different research papers, we have chosen Euclidean distance as our distance metric.
 
 We have used the [dataset](https://www.mvtec.com/company/research/datasets/mvtec-ad) from MVTec AD which contains good and anomaly samples from 15 classes and trained the model using Siamese Neural Networks. We were able to do that by pairing images from same and different models such that the model can learn the similarity metric. 
+
+During the test time, we have compared images from same class and as well as images from other class and got their distance metric, which helped us analyze the performance of our model.
 
 
 
