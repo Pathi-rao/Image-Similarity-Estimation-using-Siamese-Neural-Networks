@@ -17,8 +17,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 root_dir = '..\..\Dataset\MVTEC_AD'
 epochs = 100
 lear_rate = 0.0005
-trainbatchsize = 8
-validbatchsize = 8
+trainbatchsize = 4
+validbatchsize = 4
 testbatchsize = 1
 log_dir='test_logs'
 
@@ -30,26 +30,10 @@ if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 writer = tensorboard.SummaryWriter(log_dir)
 
-# Writing to Tensorboard
-valid_dataiter = iter(valid_loader)
-example_batch = next(valid_dataiter)
-tensorboard_images, labels = example_batch
-concatenated = torch.cat((example_batch[0],example_batch[1]),0)
-# print(example_batch[2].numpy()) # 1 is for different class, 0 is for same class
-img_grid = torchvision.utils.make_grid(concatenated, nrow=4)
-#write to tensorboard
-writer.add_image('MVTEC_Images', img_grid)
-
-
 net = SiameseNetwork().cuda()
 criterion = ContrastiveLoss().cuda()
 optimizer = optim.Adam(net.parameters(), lr = lear_rate )
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, gamma=0.95)
-
-#Inspect the model using TensorBoard
-writer.add_image("images", img_grid)
-writer.add_graph(net, tensorboard_images)
-writer.close()
 
 
 train_loss_history = [] 
@@ -75,8 +59,9 @@ for epoch in range(epochs):
 
         optimizer.zero_grad()               # reset the gradients
 
-        output1, output2 = net(img0, img1)
-        loss_contrastive = criterion(output1, output2, label) # find the loss
+        # output1, output2 = net(img0, img1)
+        scores =  net(img0, img1)
+        loss_contrastive = criterion(scores, label) # find the loss
 
         loss_contrastive.backward()         # backward pass
         optimizer.step()                    # update weights
@@ -94,8 +79,8 @@ for epoch in range(epochs):
             for i , data in enumerate(valid_loader, 0):
                 img_0, img_1, label_ = data
                 img_0, img_1 , label_ = img_0.cuda(), img_1.cuda() , label_.cuda()
-                output1, output2 = net(img_0, img_1)
-                loss_val = criterion(output1, output2, label_)
+                scores = net(img_0, img_1)
+                loss_val = criterion(scores, label_)
                 val_loss += loss_val.item()
                 val_loss_history.append(val_loss/len(valid_loader))
 
