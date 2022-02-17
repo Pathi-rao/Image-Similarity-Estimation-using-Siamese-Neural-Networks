@@ -6,8 +6,7 @@ import torch.nn.functional as F
 """ From: https://github.com/kevinzakka/one-shot-siamese/blob/master/model.py """
 
 class SiameseNetwork(nn.Module):
-    def __init__(self, lastLayer=True):
-        self.lastLayer = lastLayer
+    def __init__(self):
 
         super(SiameseNetwork, self).__init__()
         
@@ -20,6 +19,7 @@ class SiameseNetwork(nn.Module):
         self.conv4 = nn.Conv2d(128, 256, 4)
         self.fc1 = nn.Linear(9216, 4096)
         # self.fc2 = nn.Linear(4096, 1)
+        self.extraL = nn.Linear(4096, 1)
 
         # 3 channels 150x150
         #self.conv1 = nn.Conv2d(3, 64, 10)
@@ -36,9 +36,6 @@ class SiameseNetwork(nn.Module):
         # self.conv4 = nn.Conv2d(128, 256, 4)
         # self.fc1 = nn.Linear(30976, 4096)
 
-        if self.lastLayer:
-            self.extraL = nn.Linear(4096, 1)
-        
         # using kaiming intialization
         # random source- https://adityassrana.github.io/blog/theory/2020/08/26/Weight-Init.html
         for m in self.modules():
@@ -49,10 +46,6 @@ class SiameseNetwork(nn.Module):
         # defines if the last layer uses a distance metric or a neuron output
         
     def forward_once(self, x):
-        # out = F.max_pool2d(self.conv1_bn(F.relu(self.conv1(x))), 2)
-        # out = F.max_pool2d(self.conv2_bn(F.relu(self.conv2(out))), 2)
-        # out = F.max_pool2d(self.conv3_bn(F.relu(self.conv3(out))), 2)
-        # out = self.conv4_bn(F.relu(self.conv4(out)))
 
         out = F.relu(F.max_pool2d(self.conv1(x), 2))
         out = F.relu(F.max_pool2d(self.conv2(out), 2))
@@ -60,20 +53,23 @@ class SiameseNetwork(nn.Module):
         out = F.relu(self.conv4(out))
 
         out = out.view(out.shape[0], -1)
-        out = torch.sigmoid(self.fc1(out))
+        out = self.fc1(out)
+        out = self.extraL(out)
+        # out = torch.sigmoid(self.fc1(out)) # #sigmoid as we use BCELoss
         return out
 
     def forward(self, input1, input2):
         output1 = self.forward_once(input1)
         output2 = self.forward_once(input2)
 
-        if self.lastLayer:
-            # compute l1 distance (similarity) between the 2 encodings
-            diff = torch.abs(output1 - output2)
-            scores = self.extraL(diff)
-            return scores
-        else:
-            return output1, output2
+        # if self.lastLayer:
+        #     # compute l1 distance
+        #     diff = torch.abs(output1 - output2)
+        #     # score the similarity between the 2 encodings
+        #     scores = self.extraL(diff)
+        #     return scores
+        # else:
+        return output1, output2
 
 
 ########### +++++++++++++++ ###########
