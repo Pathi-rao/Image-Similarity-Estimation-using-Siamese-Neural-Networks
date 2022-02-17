@@ -1,54 +1,47 @@
-from random import triangular
 import torch
 from torch import optim
-from torch.utils import tensorboard
-import torchvision
-import os
+import torch.nn.functional as F
 import time
+import os
 import matplotlib.pyplot as plt
-from misc import Utils
 
 from loss import ContrastiveLoss
 import datahandler as dl
 from model import SiameseNetwork
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+from torch.utils import tensorboard
 
 root_dir = '..\..\Dataset\MVTEC_AD'
-epochs = 100
+epochs = 200
 lear_rate = 0.0005
 trainbatchsize = 4
 validbatchsize = 4
 testbatchsize = 1
-log_dir='test_logs'
-
-train_loader, valid_loader, test_loader = dl.pre_processor(root_dir=root_dir, trainbatchsize=trainbatchsize, 
-                                                validbatchsize=validbatchsize,
-                                                testbatchsize=testbatchsize)
+log_dir = "logs"
 
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 writer = tensorboard.SummaryWriter(log_dir)
 
+train_loader, valid_loader, test_loader = dl.pre_processor(root_dir=root_dir,
+                                            trainbatchsize=trainbatchsize, 
+                                            validbatchsize=validbatchsize,
+                                            testbatchsize=1)
+
 net = SiameseNetwork().cuda()
+# net.train()
 criterion = ContrastiveLoss().cuda()
 optimizer = optim.Adam(net.parameters(), lr = lear_rate )
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, gamma=0.95)
 
-
-train_loss_history = [] 
-val_loss_history = [] 
-
-iteration_number = 0
-val_iter_number = 0
+train_losses = []
+val_losses = []
 
 best_val = 0.1
 
 start_time = time.time()
 
+for epoch in range( epochs):
 
-for epoch in range(epochs):
-    # print(epoch)
     net.train()
     running_loss = 0
 
@@ -57,46 +50,66 @@ for epoch in range(epochs):
 
         img0, img1 , label = img0.cuda(), img1.cuda() , label.cuda()
 
-        optimizer.zero_grad()               # reset the gradients
+        # reset the gradients
+        optimizer.zero_grad()
 
-        # output1, output2 = net(img0, img1)
-        scores =  net(img0, img1)
-        loss_contrastive = criterion(scores, label) # find the loss
+        output1, output2 = net(img0, img1)
+        loss_contrastive = criterion(output1, output2, label)
 
-        loss_contrastive.backward()         # backward pass
-        optimizer.step()                    # update weights
+        loss_contrastive.backward()                             # backward pass
+        optimizer.step()                                        # update weights
 
         running_loss += loss_contrastive.item()
 
-    writer.add_scalar('train_loss/epoch', running_loss/len(train_loader), epoch)
-    print(f"Epoch number:  {epoch}\t loss: {running_loss/len(train_loader)}")
+        writer.add_scalar('train_loss/epoch', running_loss, epoch)
+    train_losses.append(running_loss/len(train_loader))
 
-    if epoch % 2 == 0: # validate for every 2 epochs
-        train_loss_history.append(running_loss/len(train_loader))
-        net.eval() #set the model to evaluation mode
+    if epoch % 2 == 0:
         val_loss = 0
+        net.eval()
         with torch.no_grad():
             for i , data in enumerate(valid_loader, 0):
                 img_0, img_1, label_ = data
                 img_0, img_1 , label_ = img_0.cuda(), img_1.cuda() , label_.cuda()
-                scores = net(img_0, img_1)
-                loss_val = criterion(scores, label_)
-                val_loss += loss_val.item()
-                val_loss_history.append(val_loss/len(valid_loader))
+                output1, output2 = net(img_0, img_1)
+                # distance = torch.sigmoid(F.pairwise_distance(output1, output2))
+                loss_val = criterion(output1, output2, label_)
+                val_loss += loss_val.item() 
+            
+            writer.add_scalar('val_loss/epoch', val_loss, epoch)
+        val_losses.append(val_loss/len(valid_loader))
 
-            writer.add_scalar('valid_loss/epoch', val_loss, epoch)
+        print('Epoch : ',epoch, "\t Train loss: {:.2f}".format(running_loss/len(train_loader)),
+            "\t Validation loss: {:.2f}".format(val_loss/len(valid_loader)))
 
-        if loss_val.item() < best_val and best_val != 0.000:
-            # print("loss is ... ", loss_val.item())
-            best_val = loss_val.item()
-            print("best val loss is.. {}\t and saved at epoch {}\t ".format(best_val, epoch))
+        if val_loss/len(valid_loader) < best_val:
+            best_val = val_loss/len(valid_loader)
             PATH = '../models/best_model_val_loss.pth'
-            torch.save(net.state_dict(), PATH)
+            torch.save(net, PATH)
+            print()
+            print("Saved best model at epoch:  ", epoch)
+            print()
+        
+        if epoch%2 == 0:
+            PATH = "../models/saved_epoch_model.pth"
+            torch.save(net, PATH)
 
     scheduler.step()
 
 print('It took {} seconds to train the model.. '.format(time.time() - start_time))
-#It took 12678.214158058167 seconds to train the model..
+
+
+
+# plot and save the losses
+fig = plt.figure(figsize=(10,5))
+plt.title("Training and Validation Loss")
+plt.plot(train_losses, label = "train")
+plt.plot(val_losses, label = "val")
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.legend()
+fig.savefig('new_Train_&_Val_loss.png')
+
 
 
 
