@@ -15,9 +15,11 @@ model_path = r"..\models\best_model_val_loss.pth" # updated model
 query_path = r"D:\Github\Dataset\MVTEC_AD\Test\bottle\good\000.png" # avoid special charcters
 # target_path = r"D:\Github\Dataset\MVTEC_AD\Test\cable\bent_wire\000.png"
 # target_path = r"D:\Github\Dataset\MVTEC_AD\Test\bottle\contamination\000.png"
-# target_path = r"D:\Github\Dataset\MVTEC_AD\Test\bottle\contamination\001.png"
+# target_path = r"D:\Github\Dataset\MVTEC_AD\Test\bottle\good\001.png"
 # target_path = r"D:\Github\Dataset\MVTEC_AD\Test\bottle\good\000.png"
-target_path = r"D:\Github\Dataset\MVTEC_AD\Test\metal_nut\bent\000.png"
+target_path = r"D:\Github\Dataset\MVTEC_AD\Test\bottle\broken_large\000.png"
+# target_path = r"D:\Github\Dataset\MVTEC_AD\Test\hazelnut\crack\000.png"
+
 
 def test_one(query_path, target_path):
 

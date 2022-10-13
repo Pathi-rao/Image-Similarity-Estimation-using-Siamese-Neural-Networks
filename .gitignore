@@ -1,2 +1,7 @@
 
 *.pyc
+models/best_model_val_loss.pth
+models/best_model_val_loss.pth
+models/saved_epoch_model.pth
+models/best_model_val_loss.pth
+models/best_model_val_loss.pth

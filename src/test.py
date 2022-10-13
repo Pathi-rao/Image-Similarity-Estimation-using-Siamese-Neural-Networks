@@ -1,6 +1,11 @@
 import torch
+from model import SiameseNetwork
+from torchsummary import summary
+
 device =  torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# model = SiameseNetwork().cuda()
+# summary(model, [(1, 105, 105),(1, 105, 105)])
 def eval(model, test_loader):
     with torch.no_grad():
         model.eval()
