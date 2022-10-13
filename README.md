@@ -23,7 +23,7 @@ During the test time, we have compared images from same class and as well as ima
 ```bash
 git clone https://github.com/Pathi-rao/Project_for_Numerical_methods_for_algorithmic_systems_and_NeuralNetworks 
 ```
-2. Download the data from the provided link in [data](https://github.com/Pathi-rao/Image-Similarity-Estimation-using-Siamese-Neural-Networks/tree/main/data) folder and extract it. Also, please sure to update the file paths if necessary.
+2. Download the data from the provided link in [data](https://github.com/Pathi-rao/Image-Similarity-Estimation-using-Siamese-Neural-Networks/tree/main/data) folder and extract it. Also, please make sure to update the file paths if necessary.
 
 3. Create a virtual environment with Python(For this step I will assume that you are able to create a virtual environment with `virtualenv`, but in any case you can check an example [here](https://realpython.com/python-virtual-environments-a-primer/).)
 
